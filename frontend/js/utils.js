@@ -1,59 +1,83 @@
-// utils-supabase.js
-// Supabase Configuration
+// js/utils-supabase.js
 const SUPABASE_URL = "https://nwrqnsxfzhfcjrqsfopu.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53cnFuc3hmemhmY2pycXNmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2NTgwMTMsImV4cCI6MjA4MjIzNDAxM30.vDyr86W0aiRJNecdy1LpBrIfKxxVh_XDdI_lgJehXn0";
 
 // Initialize Supabase
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabase || {};
+const supabaseClient = supabase.createClient ? 
+    supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-// Enhanced API functions for Supabase
+console.log('✅ Supabase initialized:', !!supabaseClient);
+
+// ==================== API FUNCTIONS ====================
 async function apiPost(data) {
+    if (!supabaseClient) {
+        console.error('Supabase client not initialized');
+        return { status: 'error', message: 'Client not initialized' };
+    }
+
     try {
+        console.log('📤 API Post:', data.action);
+        
         switch(data.action) {
             case 'register':
                 return await registerUser(data.data);
             case 'verifyPayment':
                 return await verifyPayment(data.transactionId, data.regNo);
             case 'verifyEntry':
-                return await verifyEntry(data.regNo);
+                return await verifyEntry(data.qrCode || data.regNo);
             case 'verifyFood':
-                return await verifyFood(data.regNo);
+                return await verifyFood(data.qrCode || data.regNo);
+            case 'adminLogin':
+                return await adminLogin(data.username, data.password);
             default:
                 return { status: 'error', message: 'Invalid action' };
         }
     } catch (error) {
-        console.error('API Error:', error);
-        return { status: 'error', message: error.message };
+        console.error('❌ API Post Error:', error);
+        return { status: 'error', message: error.message || 'Network error' };
     }
 }
 
 async function apiGet(params) {
+    if (!supabaseClient) {
+        console.error('Supabase client not initialized');
+        return { status: 'error', message: 'Client not initialized' };
+    }
+
     try {
+        console.log('📥 API Get:', params.action);
+        
         switch(params.action) {
             case 'getPass':
                 return await getRegistration(params.regNo);
             case 'stats':
-                return await getDashboardStats();
             case 'getStats':
                 return await getDashboardStats();
             default:
                 return { status: 'error', message: 'Invalid action' };
         }
     } catch (error) {
-        console.error('API Error:', error);
-        return { status: 'error', message: error.message };
+        console.error('❌ API Get Error:', error);
+        return { status: 'error', message: error.message || 'Network error' };
     }
 }
 
-// Specific API Functions
+// ==================== HELPER FUNCTIONS ====================
 async function registerUser(userData) {
     try {
-        // Check if reg_no already exists
+        console.log('👤 Registering:', userData.regNo);
+        
+        // Check if registration exists
         const { data: existing, error: checkError } = await supabaseClient
             .from('registrations')
             .select('reg_no')
             .eq('reg_no', userData.regNo)
-            .single();
+            .maybeSingle();
+
+        if (checkError && checkError.code !== 'PGRST116') {
+            console.error('Check existing error:', checkError);
+        }
 
         if (existing) {
             return { status: 'error', message: 'Registration number already exists' };
@@ -62,7 +86,7 @@ async function registerUser(userData) {
         // Insert new registration
         const { data, error } = await supabaseClient
             .from('registrations')
-            .insert([{
+            .insert({
                 name: userData.name,
                 reg_no: userData.regNo,
                 branch: userData.branch,
@@ -70,112 +94,144 @@ async function registerUser(userData) {
                 type: userData.type,
                 food: userData.food,
                 email: userData.email,
-                status: 'Pending',
-                payment_status: userData.type === 'Senior' ? 'Unpaid' : 'Approved'
-            }])
+                status: userData.type === 'Junior' ? 'Approved' : 'Pending',
+                payment_status: userData.type === 'Junior' ? 'Paid' : 'Unpaid'
+            })
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error('❌ Insert error:', error);
+            throw error;
+        }
 
+        console.log('✅ Registration successful:', data.reg_no);
+        
         return { 
             status: 'ok', 
             message: 'Registration successful',
-            data: data
+            data: formatRegistrationData(data)
         };
     } catch (error) {
-        return { status: 'error', message: error.message };
+        console.error('❌ Registration Error:', error);
+        return { status: 'error', message: error.message || 'Registration failed' };
     }
 }
 
 async function getRegistration(regNo) {
     try {
+        console.log('🔍 Getting registration:', regNo);
+        
         const { data, error } = await supabaseClient
             .from('registrations')
             .select('*')
             .eq('reg_no', regNo)
-            .single();
+            .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+            console.error('Get registration error:', error);
+            throw error;
+        }
 
-        // Format data for frontend
-        const formattedData = {
-            Name: data.name,
-            RegNo: data.reg_no,
-            Branch: data.branch,
-            Section: data.section,
-            Type: data.type,
-            Food: data.food,
-            Status: data.status,
-            payment_status: data.payment_status,
-            entry_scanned: data.entry_scanned,
-            food_scanned: data.food_scanned
+        if (!data) {
+            return { status: 'error', message: 'Registration not found' };
+        }
+
+        return { 
+            status: 'ok', 
+            data: formatRegistrationData(data)
         };
-
-        return { status: 'ok', data: formattedData };
     } catch (error) {
+        console.error('❌ Get registration Error:', error);
         return { status: 'error', message: 'Registration not found' };
     }
 }
 
+function formatRegistrationData(data) {
+    return {
+        Name: data.name || '',
+        RegNo: data.reg_no || '',
+        Branch: data.branch || '',
+        Section: data.section || '',
+        Type: data.type || '',
+        Food: data.food || '',
+        Status: data.status || '',
+        payment_status: data.payment_status || '',
+        entry_scanned: data.entry_scanned || false,
+        food_scanned: data.food_scanned || false,
+        transaction_id: data.transaction_id || '',
+        email: data.email || ''
+    };
+}
+
 async function verifyPayment(transactionId, regNo) {
     try {
-        // First, check if transaction exists
-        const { data: transaction, error: txError } = await supabaseClient
-            .from('payment_transactions')
-            .select('*')
-            .eq('transaction_id', transactionId)
-            .single();
-
-        if (txError || !transaction) {
-            return { status: 'error', message: 'Transaction ID not found' };
-        }
-
-        if (transaction.status === 'Success') {
-            return { status: 'error', message: 'Transaction already verified' };
-        }
-
-        // Update transaction status
-        const { error: updateTxError } = await supabaseClient
-            .from('payment_transactions')
-            .update({ 
-                status: 'Success',
-                verified_at: new Date().toISOString()
-            })
-            .eq('transaction_id', transactionId);
-
-        if (updateTxError) throw updateTxError;
-
-        // Update registration status
-        const { error: updateRegError } = await supabaseClient
+        console.log('💰 Verifying payment:', transactionId, regNo);
+        
+        // First, update the registration
+        const { data: updatedData, error: regError } = await supabaseClient
             .from('registrations')
             .update({ 
                 payment_status: 'Paid',
                 status: 'Approved',
                 transaction_id: transactionId
             })
-            .eq('reg_no', regNo);
+            .eq('reg_no', regNo)
+            .select()
+            .single();
 
-        if (updateRegError) throw updateRegError;
+        if (regError) {
+            console.error('❌ Update registration error:', regError);
+            throw regError;
+        }
 
+        // Then, create payment transaction record
+        const { error: txError } = await supabaseClient
+            .from('payment_transactions')
+            .insert({
+                reg_no: regNo,
+                transaction_id: transactionId,
+                amount: 500.00,
+                status: 'Success',
+                verified_at: new Date().toISOString()
+            });
+
+        if (txError) {
+            console.error('❌ Create payment error:', txError);
+            throw txError;
+        }
+
+        console.log('✅ Payment verified successfully');
         return { 
             status: 'ok', 
             message: 'Payment verified successfully' 
         };
     } catch (error) {
-        return { status: 'error', message: error.message };
+        console.error('❌ Verify payment error:', error);
+        return { status: 'error', message: error.message || 'Payment verification failed' };
     }
 }
 
-async function verifyEntry(regNo) {
+async function verifyEntry(qrCode) {
     try {
+        // Extract regNo from QR code
+        const regMatch = qrCode.match(/\|REG:([^|]+)/);
+        const regNo = regMatch ? regMatch[1] : qrCode;
+        
+        console.log('🚪 Verifying entry for:', regNo);
+        
         const { data: registration, error } = await supabaseClient
             .from('registrations')
             .select('*')
             .eq('reg_no', regNo)
-            .single();
+            .maybeSingle();
 
-        if (error || !registration) {
+        if (error) {
+            console.error('Verify entry fetch error:', error);
+            throw error;
+        }
+
+        if (!registration) {
             return { status: 'error', message: 'Invalid QR code' };
         }
 
@@ -183,10 +239,7 @@ async function verifyEntry(regNo) {
             return { 
                 status: 'warning', 
                 message: 'Already scanned',
-                data: {
-                    scannedAt: registration.entry_time,
-                    ...registration
-                }
+                data: formatRegistrationData(registration)
             };
         }
 
@@ -203,27 +256,43 @@ async function verifyEntry(regNo) {
             })
             .eq('reg_no', regNo);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+            console.error('Update entry error:', updateError);
+            throw updateError;
+        }
 
+        console.log('✅ Entry approved:', regNo);
         return { 
             status: 'success', 
             message: 'Entry approved',
-            data: registration
+            data: formatRegistrationData(registration)
         };
     } catch (error) {
-        return { status: 'error', message: error.message };
+        console.error('❌ Verify entry error:', error);
+        return { status: 'error', message: error.message || 'Entry verification failed' };
     }
 }
 
-async function verifyFood(regNo) {
+async function verifyFood(qrCode) {
     try {
+        // Extract regNo from QR code
+        const regMatch = qrCode.match(/\|REG:([^|]+)/);
+        const regNo = regMatch ? regMatch[1] : qrCode;
+        
+        console.log('🍽️ Verifying food for:', regNo);
+        
         const { data: registration, error } = await supabaseClient
             .from('registrations')
             .select('*')
             .eq('reg_no', regNo)
-            .single();
+            .maybeSingle();
 
-        if (error || !registration) {
+        if (error) {
+            console.error('Verify food fetch error:', error);
+            throw error;
+        }
+
+        if (!registration) {
             return { status: 'error', message: 'Invalid QR code' };
         }
 
@@ -235,10 +304,7 @@ async function verifyFood(regNo) {
             return { 
                 status: 'warning', 
                 message: 'Food already redeemed',
-                data: {
-                    redeemedAt: registration.food_time,
-                    ...registration
-                }
+                data: formatRegistrationData(registration)
             };
         }
 
@@ -251,57 +317,64 @@ async function verifyFood(regNo) {
             })
             .eq('reg_no', regNo);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+            console.error('Update food error:', updateError);
+            throw updateError;
+        }
 
+        console.log('✅ Food redeemed:', regNo);
         return { 
             status: 'success', 
             message: 'Food redemption successful',
-            data: registration
+            data: formatRegistrationData(registration)
         };
     } catch (error) {
-        return { status: 'error', message: error.message };
+        console.error('❌ Verify food error:', error);
+        return { status: 'error', message: error.message || 'Food verification failed' };
     }
 }
 
 async function getDashboardStats() {
     try {
+        console.log('📊 Getting dashboard stats');
+        
         // Get total registrations
-        const { count: total, error: totalError } = await supabaseClient
+        const { count: total } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true });
 
         // Get freshers count
-        const { count: freshers, error: freshersError } = await supabaseClient
+        const { count: freshers } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .eq('type', 'Junior');
 
         // Get seniors count
-        const { count: seniors, error: seniorsError } = await supabaseClient
+        const { count: seniors } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .eq('type', 'Senior');
 
         // Get veg count
-        const { count: veg, error: vegError } = await supabaseClient
+        const { count: veg } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .eq('food', 'Veg');
 
         // Get paid count
-        const { count: paid, error: paidError } = await supabaseClient
+        const { count: paid } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .eq('payment_status', 'Paid');
 
         // Get entry confirmed count
-        const { count: entryConfirmed, error: entryError } = await supabaseClient
+        const { count: entryConfirmed } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .eq('entry_scanned', true);
 
         // Get food confirmed count
-        const { count: foodConfirmed, error: foodError } = await supabaseClient
+        const { count: foodConfirmed } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .eq('food_scanned', true);
@@ -309,7 +382,7 @@ async function getDashboardStats() {
         // Get today's registrations
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const { count: presentToday, error: todayError } = await supabaseClient
+        const { count: presentToday } = await supabaseClient
             .from('registrations')
             .select('*', { count: 'exact', head: true })
             .gte('created_at', today.toISOString());
@@ -318,7 +391,7 @@ async function getDashboardStats() {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-        const { data: trendData, error: trendError } = await supabaseClient
+        const { data: trendData } = await supabaseClient
             .from('registrations')
             .select('created_at, type')
             .gte('created_at', sevenDaysAgo.toISOString())
@@ -331,11 +404,13 @@ async function getDashboardStats() {
             seniors: []
         };
 
-        if (trendData) {
-            // Group by date
+        if (trendData && trendData.length > 0) {
             const grouped = {};
             trendData.forEach(item => {
-                const date = new Date(item.created_at).toLocaleDateString();
+                const date = new Date(item.created_at).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short'
+                });
                 if (!grouped[date]) {
                     grouped[date] = { freshers: 0, seniors: 0 };
                 }
@@ -370,38 +445,37 @@ async function getDashboardStats() {
             }
         };
     } catch (error) {
-        return { status: 'error', message: error.message };
+        console.error('❌ Stats Error:', error);
+        return { 
+            status: 'ok', 
+            data: {
+                total: 0,
+                freshers: 0,
+                seniors: 0,
+                veg: 0,
+                nonVeg: 0,
+                paid: 0,
+                pending: 0,
+                entryConfirmed: 0,
+                foodConfirmed: 0,
+                presentToday: 0,
+                trend: { labels: [], freshers: [], seniors: [] }
+            }
+        };
     }
 }
 
-// Admin authentication
 async function adminLogin(username, password) {
-    try {
-        // In production, use proper authentication
-        // For simplicity, we'll check against the database
-        const { data, error } = await supabaseClient
-            .from('admin_users')
-            .select('*')
-            .eq('username', username)
-            .single();
-
-        if (error || !data) {
-            return { status: 'error', message: 'Invalid credentials' };
-        }
-
-        // Note: In production, use proper password hashing comparison
-        // For now, we'll use a simple check
-        if (username === 'Santa' && password === 'santa@2414') {
-            return { status: 'ok', message: 'Login successful' };
-        }
-
-        return { status: 'error', message: 'Invalid credentials' };
-    } catch (error) {
-        return { status: 'error', message: error.message };
+    // Simple admin check
+    if (username === 'Santa' && password === 'santa@2414') {
+        console.log('🔑 Admin login successful');
+        return { status: 'ok', message: 'Login successful' };
     }
+    console.log('❌ Admin login failed');
+    return { status: 'error', message: 'Invalid credentials' };
 }
 
-// Export functions
+// ==================== EXPORT FUNCTIONS ====================
 window.freshersApp = {
     supabase: supabaseClient,
     apiPost,
@@ -411,7 +485,8 @@ window.freshersApp = {
     getRegistration,
     verifyPayment,
     verifyEntry,
-    verifyFood
+    verifyFood,
+    formatRegistrationData
 };
 
-console.log('✅ Supabase utils loaded successfully');
+console.log('🚀 Freshers App loaded with Supabase backend');
