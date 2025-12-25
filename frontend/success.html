@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Successful | Freshers Party 2025</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    :root {
+      --primary: #06d6a0;
+      --secondary: #8a2be2;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --light: #f8f9fa;
+      --card-bg: rgba(25, 25, 35, 0.8);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .navbar {
+      background: rgba(18, 18, 18, 0.9);
+      padding: 15px 0;
+      margin-bottom: 20px;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px;
+    }
+
+    .nav-brand {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--light);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: rgba(6, 214, 160, 0.1);
+      color: var(--primary);
+    }
+
+    .success-container {
+      text-align: center;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, var(--primary), var(--secondary));
+    }
+
+    .logo i {
+      color: #fff;
+      font-size: 36px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .success-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .ticket-info,
+    .qr-section {
+      flex: 1;
+      min-width: 280px;
+      max-width: 450px;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .ticket-info h2,
+    .qr-section h2 {
+      margin-bottom: 15px;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item:last-child {
+      border: none;
+    }
+
+    .qr-container {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      min-height: 250px;
+      align-items: center;
+    }
+
+    .instructions {
+      margin-top: 20px;
+      background: rgba(6, 214, 160, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: left;
+      max-width: 900px;
+      margin: 20px auto;
+    }
+
+    .instructions h3 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .primary-btn {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: #fff;
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">Freshers Party 2025</a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="junior.html" class="nav-link">Fresher Registration</a></li>
+        <li><a href="senior.html" class="nav-link">Senior Registration</a></li>
+        <li><a href="payment.html" class="nav-link">Payment</a></li>
+        <li><a href="success.html" class="nav-link active">Success</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="success-container">
+    <div class="logo"><i class="fas fa-check-circle"></i></div>
+    <h1>Registration Successful!</h1>
+    <p>Your registration for Freshers Party 2025 is confirmed</p>
+
+    <div class="success-content">
+      <!-- Ticket Info -->
+      <div class="ticket-info">
+        <h2><i class="fas fa-ticket-alt"></i> Ticket Details</h2>
+        <div class="info-item"><span>Name:</span><span id="ticket-name">Loading...</span></div>
+        <div class="info-item"><span>Registration No:</span><span id="ticket-regno">Loading...</span></div>
+        <div class="info-item"><span>Type:</span><span id="ticket-type">Loading...</span></div>
+        <div class="info-item"><span>Branch:</span><span id="ticket-branch">Loading...</span></div>
+        <div class="info-item"><span>Section:</span><span id="ticket-section">Loading...</span></div>
+        <div class="info-item"><span>Food:</span><span id="ticket-food">Loading...</span></div>
+        <div class="info-item"><span>Status:</span><span style="color:var(--primary);">Confirmed</span></div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-section">
+        <h2><i class="fas fa-qrcode"></i> Entry Pass</h2>
+        <div class="qr-container" id="qrcode">
+          <div class="loading">
+            <div class="spinner"></div>
+          </div>
+        </div>
+        <p>Show this QR code at the entrance for verification</p>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3><i class="fas fa-info-circle"></i> Important Instructions</h3>
+      <ol>
+        <li>Carry a valid college ID card with this ticket.</li>
+        <li>The QR code will be scanned at the entrance.</li>
+        <li>Food coupons will be based on your preference.</li>
+        <li>Event: Oct 15, 2025 | 6:00 PM onwards.</li>
+        <li>Venue: College Auditorium.</li>
+      </ol>
+    </div>
+
+    <div class="action-buttons">
+      <a href="index.html" class="action-btn primary-btn"><i class="fas fa-home"></i> Home</a>
+      <button onclick="window.print()" class="action-btn secondary-btn"><i class="fas fa-print"></i> Print</button>
+      <button class="action-btn secondary-btn" id="download-btn"><i class="fas fa-download"></i> Download QR</button>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const regNo = params.get('regNo');
+
+      if (!regNo) {
+        alert('No registration number found. Please register first.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      try {
+        // Show loading state
+        document.getElementById('ticket-name').textContent = 'Loading...';
+        document.getElementById('ticket-regno').textContent = 'Loading...';
+
+        const res = await apiGet({ action: 'getPass', regNo });
+
+        if (res.status !== 'ok' || !res.data) {
+          alert('Registration not found. Please try registering again.');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const d = res.data;
+
+        // Fill details dynamically
+        document.getElementById('ticket-name').textContent = d.Name || 'N/A';
+        document.getElementById('ticket-regno').textContent = d.RegNo || 'N/A';
+        document.getElementById('ticket-type').textContent = d.Type || (d.isJunior ? 'Junior' : 'Senior');
+        document.getElementById('ticket-branch').textContent = d.Branch || 'N/A';
+        document.getElementById('ticket-section').textContent = d.Section || 'N/A';
+        document.getElementById('ticket-food').textContent = d.Food || 'N/A';
+
+        // Generate QR code
+        generateQRCode(d);
+
+        // Set up download button
+        document.getElementById('download-btn').addEventListener('click', (e) => {
+          e.preventDefault();
+          downloadQRCode(d.RegNo);
+        });
+      } catch (err) {
+        console.error('Error loading data:', err);
+        alert('Error loading registration data. Please check your connection and try again.');
+      }
+    });
+
+    function generateQRCode(d) {
+      const qrData = `APP:FRESHER2025|REG:${d.RegNo}|NAME:${d.Name}|TYPE:${d.Type || (d.isJunior ? 'Junior' : 'Senior')}|BRANCH:${d.Branch}|SECTION:${d.Section}|FOOD:${d.Food}`;
+      const qrElement = document.getElementById('qrcode');
+      qrElement.innerHTML = "";
+
+      // Create canvas for QR code
+      const canvas = document.createElement('canvas');
+      qrElement.appendChild(canvas);
+
+      // Generate QR code
+      QRCode.toCanvas(canvas, qrData, {
+        width: 200,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      }, function (err) {
+        if (err) {
+          console.error('QR generation error:', err);
+          qrElement.innerHTML = "<p style='color:red'>Error generating QR code</p>";
+        }
+      });
+    }
+
+    function downloadQRCode(regNo) {
+      const canvas = document.querySelector('#qrcode canvas');
+      if (!canvas) {
+        alert('QR code not available for download');
+        return;
+      }
+
+      try {
+        const link = document.createElement('a');
+        link.download = `freshers-ticket-${regNo}.png`;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.error('Download error:', err);
+        alert('Error downloading QR code');
+      }
+    }
+  </script>
+</body>
+
+</html>

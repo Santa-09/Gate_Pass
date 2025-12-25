@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Gate Scanner</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #8a2be2;
+      --secondary: #00b4d8;
+      --accent: #ff6b6b;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --light: #f8f9fa;
+      --success: #06d6a0;
+      --card-bg: rgba(25, 25, 35, 0.8);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+      color: var(--light);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%238a2be2" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,160C384,139,480,117,576,122.7C672,128,768,160,864,170.7C960,181,1056,171,1152,165.3C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+      background-size: cover;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Navigation */
+    .navbar {
+      background: rgba(18, 18, 18, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 25px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary);
+      background: rgba(138, 43, 226, 0.1);
+    }
+
+    /* Scanner Styles */
+    .scanner-page {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .scanner-page h2 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      text-align: center;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    #result {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 20px;
+    }
+
+    .scan-result {
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    .scan-success {
+      background: rgba(6, 214, 160, 0.1);
+      border-left: 4px solid var(--success);
+    }
+
+    .scan-error {
+      background: rgba(239, 71, 111, 0.1);
+      border-left: 4px solid var(--accent);
+    }
+
+    .scan-warning {
+      background: rgba(255, 204, 0, 0.1);
+      border-left: 4px solid var(--warning);
+    }
+
+    .scan-result h4 {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scan-details {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .scan-details div {
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .scan-actions {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nav-menu {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .nav-link {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+      }
+
+      .scanner-page h2 {
+        font-size: 2rem;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <i class="fas fa-party-horn"></i>
+        <span>Freshers 2025</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="gate-scanner.html" class="nav-link active">Gate Scanner</a></li>
+        <li><a href="food-scanner.html" class="nav-link">Food Scanner</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="scanner-page">
+      <h2>Gate Scanner</h2>
+      <div id="reader"></div>
+      <div id="result">
+        <p>Scan a QR code to verify entry</p>
+        <div class="scan-result scan-success" style="display: none;" id="successResult">
+          <h4><i class="fas fa-check-circle"></i> Entry Approved</h4>
+          <div class="scan-details">
+            <div><span>Name:</span> <span id="scanName">John Doe</span></div>
+            <div><span>Registration No:</span> <span id="scanRegNo">12345</span></div>
+            <div><span>Type:</span> <span id="scanType">Senior</span></div>
+            <div><span>Time:</span> <span id="scanTime">12:30 PM</span></div>
+          </div>
+        </div>
+        <div class="scan-result scan-error" style="display: none;" id="errorResult">
+          <h4><i class="fas fa-exclamation-circle"></i> Invalid Ticket</h4>
+          <p>This QR code is not valid for entry.</p>
+        </div>
+        <div class="scan-result scan-warning" style="display: none;" id="warningResult">
+          <h4><i class="fas fa-exclamation-triangle"></i> Already Scanned</h4>
+          <p>This ticket was already used for entry at <span id="previousTime">12:15 PM</span>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="js/utils-supabase.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      async function onScanSuccess(decodedText) {
+        try {
+          const regNo = decodedText.split('|REG:')[1]?.split('|')[0];
+          if (!regNo) {
+            showError('Invalid QR format');
+            return;
+          }
+
+          // For gate scanner
+          const result = await window.freshersApp.verifyEntry(regNo);
+
+          // For food scanner
+          // const result = await window.freshersApp.verifyFood(regNo);
+
+          if (result.status === 'success') {
+            showSuccess(result.data);
+          } else {
+            showError(result.message);
+          }
+        } catch (err) {
+          console.error(err);
+          showError('Scanning error');
+        }
+      }
+
+      // Initialize scanner...
+    });
+  </script>
+</body>
+
+</html>
