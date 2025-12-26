@@ -1,24 +1,16 @@
-// ================================
-// SAFETY CHECKS (DO NOT REMOVE)
-// ================================
+const SUPABASE_URL =
+  window.SUPABASE_URL ||
+  import.meta?.env?.VITE_SUPABASE_URL ||
+  "";
 
-if (!window.APP_CONFIG) {
-  throw new Error(
-    "APP_CONFIG not found. Make sure config.js is loaded BEFORE utils-supabase.js"
-  );
+const SUPABASE_ANON_KEY =
+  window.SUPABASE_ANON_KEY ||
+  import.meta?.env?.VITE_SUPABASE_ANON_KEY ||
+  "";
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  throw new Error("Supabase env variables not found");
 }
-
-if (typeof supabase === "undefined") {
-  throw new Error(
-    "Supabase SDK not loaded. Make sure supabase-js script is loaded BEFORE utils-supabase.js"
-  );
-}
-
-// ================================
-// SUPABASE CLIENT INITIALIZATION
-// ================================
-
-const { SUPABASE_URL, SUPABASE_ANON_KEY } = window.APP_CONFIG;
 
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
