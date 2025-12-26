@@ -2,298 +2,90 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Successful | Freshers Party 2025</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registration Successful</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root {
-      --primary: #06d6a0;
-      --secondary: #8a2be2;
-      --dark: #121212;
-      --darker: #0a0a0a;
-      --light: #f8f9fa;
-      --card-bg: rgba(25, 25, 35, 0.8);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
     body {
-      background: linear-gradient(135deg, var(--darker), var(--dark));
-      color: var(--light);
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .navbar {
-      background: rgba(18, 18, 18, 0.9);
-      padding: 15px 0;
-      margin-bottom: 20px;
-    }
-
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: auto;
-      padding: 0 20px;
-    }
-
-    .nav-brand {
-      text-decoration: none;
-      color: var(--light);
-      font-weight: 700;
-      font-size: 1.3rem;
-    }
-
-    .nav-menu {
-      display: flex;
-      gap: 20px;
-      list-style: none;
-    }
-
-    .nav-link {
-      color: var(--light);
-      text-decoration: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-    }
-
-    .nav-link:hover,
-    .nav-link.active {
-      background: rgba(6, 214, 160, 0.1);
-      color: var(--primary);
-    }
-
-    .success-container {
-      text-align: center;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .logo {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(145deg, var(--primary), var(--secondary));
-    }
-
-    .logo i {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a, #121212);
       color: #fff;
-      font-size: 36px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: rgba(25, 25, 35, 0.9);
+      padding: 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
     }
 
     h1 {
-      font-size: 2rem;
+      color: #06d6a0;
       margin-bottom: 10px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
     }
 
-    .success-content {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 30px;
+    .info {
+      margin: 12px 0;
+      font-size: 1.05rem;
     }
 
-    .ticket-info,
-    .qr-section {
-      flex: 1;
-      min-width: 280px;
-      max-width: 450px;
-      background: var(--card-bg);
-      padding: 20px;
+    .info span {
+      font-weight: 600;
+      color: #ffd166;
+    }
+
+    #qrBox {
+      margin: 25px auto;
+      width: 200px;
+      height: 200px;
+      background: #fff;
+      padding: 10px;
       border-radius: 12px;
     }
 
-    .ticket-info h2,
-    .qr-section h2 {
-      margin-bottom: 15px;
-      color: var(--primary);
-      font-size: 1.2rem;
-    }
-
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .info-item:last-child {
-      border: none;
-    }
-
-    .qr-container {
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      min-height: 250px;
-      align-items: center;
-    }
-
-    .instructions {
-      margin-top: 20px;
-      background: rgba(6, 214, 160, 0.1);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: left;
-      max-width: 900px;
-      margin: 20px auto;
-    }
-
-    .instructions h3 {
-      margin-bottom: 10px;
-      color: var(--primary);
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 25px;
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-      padding: 10px 18px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-    }
-
-    .primary-btn {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: #fff;
-    }
-
-    .secondary-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--light);
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .loading {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 200px;
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      border-top: 4px solid var(--primary);
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
+    .note {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      opacity: 0.8;
     }
   </style>
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="nav-brand">Freshers Party 2025</a>
-      <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link">Home</a></li>
-        <li><a href="junior.html" class="nav-link">Fresher Registration</a></li>
-        <li><a href="senior.html" class="nav-link">Senior Registration</a></li>
-        <li><a href="payment.html" class="nav-link">Payment</a></li>
-        <li><a href="success.html" class="nav-link active">Success</a></li>
-      </ul>
-    </div>
-  </nav>
 
-  <div class="success-container">
-    <div class="logo"><i class="fas fa-check-circle"></i></div>
-    <h1>Registration Successful!</h1>
-    <p>Your registration for Freshers Party 2025 is confirmed</p>
+  <div class="card">
+    <h1>Registration Successful 🎉</h1>
 
-    <div class="success-content">
-      <!-- Ticket Info -->
-      <div class="ticket-info">
-        <h2><i class="fas fa-ticket-alt"></i> Ticket Details</h2>
-        <div class="info-item"><span>Name:</span><span id="ticket-name">Loading...</span></div>
-        <div class="info-item"><span>Registration No:</span><span id="ticket-regno">Loading...</span></div>
-        <div class="info-item"><span>Type:</span><span id="ticket-type">Loading...</span></div>
-        <div class="info-item"><span>Branch:</span><span id="ticket-branch">Loading...</span></div>
-        <div class="info-item"><span>Section:</span><span id="ticket-section">Loading...</span></div>
-        <div class="info-item"><span>Food:</span><span id="ticket-food">Loading...</span></div>
-        <div class="info-item"><span>Status:</span><span style="color:var(--primary);">Confirmed</span></div>
-      </div>
+    <div class="info">Name: <span id="name"></span></div>
+    <div class="info">Registration No: <span id="regNo"></span></div>
+    <div class="info">Branch: <span id="branch"></span></div>
+    <div class="info">Section: <span id="section"></span></div>
+    <div class="info">Type: <span id="type"></span></div>
+    <div class="info">Food: <span id="food"></span></div>
 
-      <!-- QR Code -->
-      <div class="qr-section">
-        <h2><i class="fas fa-qrcode"></i> Entry Pass</h2>
-        <div class="qr-container" id="qrcode">
-          <div class="loading">
-            <div class="spinner"></div>
-          </div>
-        </div>
-        <p>Show this QR code at the entrance for verification</p>
-      </div>
-    </div>
+    <div id="qrBox"></div>
 
-    <div class="instructions">
-      <h3><i class="fas fa-info-circle"></i> Important Instructions</h3>
-      <ol>
-        <li>Carry a valid college ID card with this ticket.</li>
-        <li>The QR code will be scanned at the entrance.</li>
-        <li>Food coupons will be based on your preference.</li>
-        <li>Event: Oct 15, 2025 | 6:00 PM onwards.</li>
-        <li>Venue: College Auditorium.</li>
-      </ol>
-    </div>
-
-    <div class="action-buttons">
-      <a href="index.html" class="action-btn primary-btn"><i class="fas fa-home"></i> Home</a>
-      <button onclick="window.print()" class="action-btn secondary-btn"><i class="fas fa-print"></i> Print</button>
-      <button class="action-btn secondary-btn" id="download-btn"><i class="fas fa-download"></i> Download QR</button>
+    <div class="note">
+      Please show this QR code at the entry gate.
     </div>
   </div>
 
+  <!-- ✅ SCRIPT ORDER -->
   <script src="js/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="js/utils.js"></script>
   <script src="js/utils-supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -305,15 +97,10 @@
         return;
       }
 
-      if (typeof window.apiGet !== "function") {
-        alert("System not ready. Please refresh.");
-        return;
-      }
-
       try {
         const res = await window.apiGet({
           action: "getPass",
-          regNo: regNo
+          regNo
         });
 
         if (res.status !== "ok") {
@@ -321,32 +108,29 @@
           return;
         }
 
-        const data = res.data;
+        const d = res.data;
 
-        // Example: fill UI (change IDs as per your HTML)
-        document.getElementById("userName").innerText = data.name;
-        document.getElementById("userRegNo").innerText = data.reg_no;
-        document.getElementById("userBranch").innerText = data.branch;
-        document.getElementById("userSection").innerText = data.section;
-        document.getElementById("userFood").innerText = data.food;
-        document.getElementById("userType").innerText = data.type;
+        // ✅ IDs MATCH HTML
+        document.getElementById("name").innerText = d.name;
+        document.getElementById("regNo").innerText = d.reg_no;
+        document.getElementById("branch").innerText = d.branch;
+        document.getElementById("section").innerText = d.section;
+        document.getElementById("type").innerText = d.type;
+        document.getElementById("food").innerText = d.food;
 
-        // QR generation example (if you use QRCode.js)
-        if (window.QRCode) {
-          new QRCode(document.getElementById("qrBox"), {
-            text: data.reg_no,
-            width: 200,
-            height: 200
-          });
-        }
+        // QR CODE
+        new QRCode(document.getElementById("qrBox"), {
+          text: d.reg_no,
+          width: 180,
+          height: 180
+        });
 
       } catch (err) {
         console.error("Error loading data:", err);
-        alert("Failed to load registration data");
+        alert("Failed to load registration details");
       }
     });
   </script>
 
 </body>
-
 </html>
