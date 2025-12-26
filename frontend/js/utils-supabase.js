@@ -73,7 +73,9 @@ async function registerUser(data) {
       food: data.food,
       email: data.email,
       status: data.type === "Junior" ? "Approved" : "Pending",
-      payment_status: data.type === "Junior" ? "Paid" : "Unpaid"
+      payment_status: data.type === "Junior" ? "Paid" : "Unpaid",
+      entry_scanned: false,
+      food_scanned: false
     });
 
   if (error) {
@@ -138,11 +140,43 @@ async function verifyFood(regNo) {
   return { status: "ok" };
 }
 
-async function getDashboardStats() {
-  const { count: total, error } = await supabaseClient
-    .from("registrations")
-    .select("*", { count: "exact", head: true });
+// ================================
+// DASHBOARD STATS (FULL & FIXED)
+// ================================
 
-  if (error) return { status: "error", message: error.message };
-  return { status: "ok", data: { total } };
+async function getDashboardStats() {
+  const { data, error } = await supabaseClient
+    .from("registrations")
+    .select("type, payment_status, food, entry_scanned");
+
+  if (error) {
+    console.error(error);
+    return { status: "error", message: error.message };
+  }
+
+  const stats = {
+    total: data.length,
+    freshers: 0,
+    seniors: 0,
+    paid: 0,
+    pending: 0,
+    veg: 0,
+    nonVeg: 0,
+    entryConfirmed: 0
+  };
+
+  data.forEach(r => {
+    if (r.type === "Junior") stats.freshers++;
+    if (r.type === "Senior") stats.seniors++;
+
+    if (r.payment_status === "Paid") stats.paid++;
+    if (r.payment_status === "Unpaid") stats.pending++;
+
+    if (r.food === "Veg") stats.veg++;
+    if (r.food === "NonVeg") stats.nonVeg++;
+
+    if (r.entry_scanned === true) stats.entryConfirmed++;
+  });
+
+  return { status: "ok", data: stats };
 }
