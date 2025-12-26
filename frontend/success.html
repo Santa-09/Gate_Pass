@@ -290,113 +290,63 @@
     </div>
   </div>
 
-  <!-- 1. CONFIG MUST COME FIRST -->
   <script src="js/config.js"></script>
-
-  <!-- 2. SUPABASE SDK -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-  <!-- 3. COMMON UTILS -->
   <script src="js/utils.js"></script>
-
-  <!-- 4. SUPABASE LOGIC -->
   <script src="js/utils-supabase.js"></script>
 
-  <!-- 5. PAGE LOGIC -->
-  <script src="js/form.js"></script>
-
-
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const params = new URLSearchParams(window.location.search);
-      const regNo = params.get('regNo');
+      const regNo = params.get("regNo");
 
       if (!regNo) {
-        alert('No registration number found. Please register first.');
-        window.location.href = 'index.html';
+        alert("Invalid access");
+        return;
+      }
+
+      if (typeof window.apiGet !== "function") {
+        alert("System not ready. Please refresh.");
         return;
       }
 
       try {
-        const res = await window.freshersApp.getRegistration(regNo);
+        const res = await window.apiGet({
+          action: "getPass",
+          regNo: regNo
+        });
 
-        if (res.status !== 'ok' || !res.data) {
-          alert('Registration not found. Please try registering again.');
-          window.location.href = 'index.html';
+        if (res.status !== "ok") {
+          alert("Registration not found");
           return;
         }
 
-        const d = res.data;
+        const data = res.data;
 
-        // Fill details dynamically
-        document.getElementById('ticket-name').textContent = d.Name || 'N/A';
-        document.getElementById('ticket-regno').textContent = d.RegNo || 'N/A';
-        document.getElementById('ticket-type').textContent = d.Type || 'N/A';
-        document.getElementById('ticket-branch').textContent = d.Branch || 'N/A';
-        document.getElementById('ticket-section').textContent = d.Section || 'N/A';
-        document.getElementById('ticket-food').textContent = d.Food || 'N/A';
+        // Example: fill UI (change IDs as per your HTML)
+        document.getElementById("userName").innerText = data.name;
+        document.getElementById("userRegNo").innerText = data.reg_no;
+        document.getElementById("userBranch").innerText = data.branch;
+        document.getElementById("userSection").innerText = data.section;
+        document.getElementById("userFood").innerText = data.food;
+        document.getElementById("userType").innerText = data.type;
 
-        // Generate QR code
-        generateQRCode(d);
+        // QR generation example (if you use QRCode.js)
+        if (window.QRCode) {
+          new QRCode(document.getElementById("qrBox"), {
+            text: data.reg_no,
+            width: 200,
+            height: 200
+          });
+        }
 
-        // Set up download button
-        document.getElementById('download-btn').addEventListener('click', (e) => {
-          e.preventDefault();
-          downloadQRCode(d.RegNo);
-        });
       } catch (err) {
-        console.error('Error loading data:', err);
-        alert('Error loading registration data. Please check your connection and try again.');
+        console.error("Error loading data:", err);
+        alert("Failed to load registration data");
       }
     });
-
-    function generateQRCode(d) {
-      const qrData = `APP:FRESHER2025|REG:${d.RegNo}|NAME:${d.Name}|TYPE:${d.Type}|BRANCH:${d.Branch}|SECTION:${d.Section}|FOOD:${d.Food}`;
-      const qrElement = document.getElementById('qrcode');
-      if (!qrElement) return;
-
-      qrElement.innerHTML = "";
-
-      // Create canvas for QR code
-      const canvas = document.createElement('canvas');
-      qrElement.appendChild(canvas);
-
-      // Generate QR code
-      QRCode.toCanvas(canvas, qrData, {
-        width: 200,
-        margin: 1,
-        color: {
-          dark: '#000000',
-          light: '#ffffff'
-        }
-      }, function (err) {
-        if (err) {
-          console.error('QR generation error:', err);
-          qrElement.innerHTML = "<p style='color:red'>Error generating QR code</p>";
-        }
-      });
-    }
-
-    function downloadQRCode(regNo) {
-      const canvas = document.querySelector('#qrcode canvas');
-      if (!canvas) {
-        alert('QR code not available for download');
-        return;
-      }
-
-      try {
-        const link = document.createElement('a');
-        link.download = `freshers-ticket-${regNo}.png`;
-        link.href = canvas.toDataURL('image/png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (err) {
-        console.error('Download error:', err);
-        alert('Error downloading QR code');
-      }
-    }
   </script>
+
 </body>
 
 </html>
