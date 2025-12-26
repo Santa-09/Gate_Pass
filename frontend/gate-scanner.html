@@ -316,52 +316,65 @@
     </div>
   </div>
 
-  <!-- 1. CONFIG MUST COME FIRST -->
   <script src="js/config.js"></script>
-
-  <!-- 2. SUPABASE SDK -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-  <!-- 3. COMMON UTILS -->
   <script src="js/utils.js"></script>
-
-  <!-- 4. SUPABASE LOGIC -->
   <script src="js/utils-supabase.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- inline scanner script OR js/gate-scan.js -->
 
-  <!-- 5. PAGE LOGIC -->
-  <script src="js/form.js"></script>
 
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      async function onScanSuccess(decodedText) {
-        try {
-          const regNo = decodedText.split('|REG:')[1]?.split('|')[0];
-          if (!regNo) {
-            showError('Invalid QR format');
+    document.addEventListener("DOMContentLoaded", () => {
+      const readerId = "reader";
+
+      if (!document.getElementById(readerId)) {
+        alert("QR reader element not found");
+        return;
+      }
+
+      const html5QrCode = new Html5Qrcode(readerId);
+
+      Html5Qrcode.getCameras()
+        .then(cameras => {
+          if (!cameras.length) {
+            alert("No camera found");
             return;
           }
 
-          // For gate scanner
-          const result = await window.freshersApp.verifyEntry(regNo);
+          html5QrCode.start(
+            cameras[0].id,
+            { fps: 10, qrbox: 250 },
+            async decodedText => {
+              html5QrCode.stop();
 
-          // For food scanner
-          // const result = await window.freshersApp.verifyFood(regNo);
+              // 🔥 QR CONTAINS ONLY REG NO
+              const regNo = decodedText.trim();
 
-          if (result.status === 'success') {
-            showSuccess(result.data);
-          } else {
-            showError(result.message);
-          }
-        } catch (err) {
+              const res = await window.apiPost({
+                action: "verifyEntry",
+                regNo: regNo
+              });
+
+              if (res.status === "ok") {
+                alert("✅ Entry verified");
+              } else {
+                alert(res.message || "❌ Entry failed");
+              }
+            },
+            error => {
+              // silent scan errors
+            }
+          );
+        })
+        .catch(err => {
           console.error(err);
-          showError('Scanning error');
-        }
-      }
-
-      // Initialize scanner...
+          alert("Camera permission denied or unavailable");
+        });
     });
   </script>
+
 </body>
 
 </html>
