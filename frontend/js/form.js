@@ -1,28 +1,29 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('regForm');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("regForm");
+  if (!form) return;
 
-  form.addEventListener('submit', async e => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const fd = new FormData(form);
+    const data = {
+      name: form.name.value,
+      regNo: form.regNo.value,
+      branch: form.branch.value,
+      section: form.section.value,
+      type: form.type.value,
+      food: form.food.value,
+      email: form.email.value
+    };
 
-    const res = await apiPost({
-      action: 'register',
-      data: {
-        name: fd.get('name'),
-        regNo: fd.get('regNo'),
-        branch: fd.get('branch'),
-        section: fd.get('section'),
-        type: fd.get('type'),
-        food: fd.get('food'),
-        email: fd.get('email')
-      }
+    const res = await window.apiPost({
+      action: "register",
+      data
     });
 
-    if (res.status === 'ok') {
-      location.href = `success.html?regNo=${fd.get('regNo')}`;
+    if (res.status === "ok") {
+      window.location.href = `success.html?regNo=${data.regNo}`;
     } else {
-      showMsg(res.message, true);
+      alert(res.message);
     }
   });
 });
