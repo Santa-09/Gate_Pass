@@ -1,9 +1,0 @@
-frontend/js/config.js
-node_modules/
-dist/
-build/
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-*.log
