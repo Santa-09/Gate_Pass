@@ -243,7 +243,7 @@
       </div>
     </div>
   </div>
-  
+
   <script src="js/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="js/utils.js"></script>
@@ -256,30 +256,29 @@
     document.addEventListener("DOMContentLoaded", () => {
       const html5QrCode = new Html5Qrcode("reader");
 
-      Html5Qrcode.getCameras().then(cameras => {
-        html5QrCode.start(
-          cameras[0].id,
-          { fps: 10, qrbox: 250 },
-          async decodedText => {
-            html5QrCode.stop();
+      html5QrCode.start(
+        { facingMode: "environment" }, // 🔥 BACK CAMERA
+        { fps: 10, qrbox: 250 },
+        async decodedText => {
+          await html5QrCode.stop();
 
-            const regNo = decodedText.trim();
+          const regNo = decodedText.trim();
 
-            const res = await window.apiPost({
-              action: "verifyFood",
-              regNo: regNo
-            });
+          const res = await window.apiPost({
+            action: "verifyFood",
+            regNo: regNo
+          });
 
-            if (res.status === "ok") {
-              alert("🍽 Food redeemed");
-            } else {
-              alert(res.message || "Food already taken");
-            }
+          if (res.status === "ok") {
+            alert("🍽 Food redeemed");
+          } else {
+            alert(res.message || "Already redeemed");
           }
-        );
-      });
+        }
+      );
     });
   </script>
+
 
 </body>
 

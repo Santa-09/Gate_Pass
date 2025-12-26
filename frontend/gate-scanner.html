@@ -327,53 +327,40 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const readerId = "reader";
+      const html5QrCode = new Html5Qrcode("reader");
 
-      if (!document.getElementById(readerId)) {
-        alert("QR reader element not found");
-        return;
-      }
+      html5QrCode.start(
+        { facingMode: "environment" }, // 🔥 FORCE BACK CAMERA
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        async decodedText => {
+          await html5QrCode.stop();
 
-      const html5QrCode = new Html5Qrcode(readerId);
+          const regNo = decodedText.trim();
 
-      Html5Qrcode.getCameras()
-        .then(cameras => {
-          if (!cameras.length) {
-            alert("No camera found");
-            return;
+          const res = await window.apiPost({
+            action: "verifyEntry",
+            regNo: regNo
+          });
+
+          if (res.status === "ok") {
+            alert("✅ Entry verified");
+          } else {
+            alert(res.message || "❌ Entry denied");
           }
-
-          html5QrCode.start(
-            cameras[0].id,
-            { fps: 10, qrbox: 250 },
-            async decodedText => {
-              html5QrCode.stop();
-
-              // 🔥 QR CONTAINS ONLY REG NO
-              const regNo = decodedText.trim();
-
-              const res = await window.apiPost({
-                action: "verifyEntry",
-                regNo: regNo
-              });
-
-              if (res.status === "ok") {
-                alert("✅ Entry verified");
-              } else {
-                alert(res.message || "❌ Entry failed");
-              }
-            },
-            error => {
-              // silent scan errors
-            }
-          );
-        })
-        .catch(err => {
-          console.error(err);
-          alert("Camera permission denied or unavailable");
-        });
+        },
+        err => {
+          // ignore scan errors
+        }
+      ).catch(err => {
+        console.error(err);
+        alert("Camera access failed");
+      });
     });
   </script>
+
 
 </body>
 
