@@ -290,11 +290,21 @@
     </div>
   </div>
 
+  <!-- 1. CONFIG MUST COME FIRST -->
   <script src="js/config.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+
+  <!-- 2. SUPABASE SDK -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <!-- 3. COMMON UTILS -->
   <script src="js/utils.js"></script>
+
+  <!-- 4. SUPABASE LOGIC -->
   <script src="js/utils-supabase.js"></script>
+
+  <!-- 5. PAGE LOGIC -->
   <script src="js/form.js"></script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
