@@ -1,355 +1,212 @@
-Freshers Party 2025 - Event Management System 🎉
-A comprehensive event management system for college freshers party with registration, QR-based entry, food management, and real-time dashboard.
+# 🎉 Freshers QR System  
+### Smart Entry & Food Verification System
 
-🌟 Live Demo
-Frontend: https://freshers2025.netlify.app (Deploy your own)
+A **QR-based Freshers Party Management System** built using **HTML, CSS, JavaScript, and Supabase** to manage **registrations, payments, entry verification, and food distribution** in a digital and secure way.
 
-Backend API: https://nwrqnsxfzhfcjrqsfopu.supabase.co
+---
 
-Admin Dashboard: /dashboard.html
+## 📌 Project Overview
 
-📋 Features
-🎫 Registration System
-Separate registration for Juniors (Freshers) and Seniors
+The **Freshers QR System** is designed to replace manual registration and checking during a college freshers party.  
+It provides a **complete digital flow** from registration to entry and food verification using **QR codes**.
 
-Automatic QR code generation for each attendee
+This system helps in:
+- Reducing manual work  
+- Preventing duplicate entry  
+- Managing food distribution properly  
+- Tracking payments and attendance  
+- Providing real-time statistics to organizers  
 
-Email and registration number validation
+---
 
-Food preference selection (Vegetarian/Non-Vegetarian)
+## 🚀 Features
 
-💳 Payment Integration
-UPI QR code payment for seniors
+### 👤 Registration
+- Separate registration for **Junior** and **Senior**
+- Stores participant details securely in the database
+- Prevents duplicate registration using **Registration Number**
 
-Transaction ID verification
+### 🎟 QR Pass Generation
+- Automatic QR code generation after registration
+- QR contains encoded participant details
+- Downloadable digital pass
 
-Automatic status updates
+### 💳 Payment Management
+- Manual payment verification using **Transaction ID**
+- Updates payment status in database
 
-Payment confirmation emails
+### 🚪 Gate Entry Verification
+- QR scanning at entry gate
+- Prevents duplicate entry
+- Allows only approved registrations
 
-🚪 Smart Entry Management
-QR code scanning at gate entry
+### 🍽 Food Distribution
+- QR-based food verification
+- Ensures food is issued only once per participant
 
-Real-time attendance tracking
+### 📊 Admin Dashboard
+- Total registrations
+- Freshers vs Seniors count
+- Payment status
+- Entry confirmed count
+- Food redeemed count
 
-Duplicate entry prevention
+---
 
-Instant verification feedback
+## 🛠 Technology Stack
 
-🍽️ Food Management
-QR-based food coupon redemption
+### Frontend
+- HTML5  
+- CSS3  
+- JavaScript (Vanilla)
 
-Food preference tracking
+### Backend / Database
+- Supabase (PostgreSQL)
+- Supabase Authentication (Anon Key)
+- Row Level Security (RLS)
 
-Prevent duplicate food claims
+### Libraries Used
+- QRCode.js
+- Html5-Qrcode
+- Supabase JS SDK
 
-Real-time food counter updates
+---
 
-📊 Admin Dashboard
-Real-time statistics and analytics
+## 📂 Project File Structure
 
-Registration trends visualization
-
-Entry and food redemption monitoring
-
-Export functionality for data
-
-🏗️ Tech Stack
-Frontend
-HTML5, CSS3, JavaScript - Core web technologies
-
-Chart.js - Data visualization
-
-QRCode.js - QR code generation
-
-Html5Qrcode - QR code scanning
-
-Font Awesome - Icons
-
-Backend & Database
-Supabase - Backend as a Service
-
-PostgreSQL - Relational database
-
-Row Level Security - Data protection
-
-REST API - Seamless communication
-
-🚀 Quick Start
-Prerequisites
-Modern web browser (Chrome, Firefox, Edge)
-
-Local server (VS Code Live Server, XAMPP, etc.)
-
-Supabase account (free tier)
-
-Installation
-Clone the repository
-
-bash
-git clone https://github.com/yourusername/freshers2025.git
-cd freshers2025
-Set up Supabase Database
-
-Go to Supabase and create account
-
-Create new project: freshers2025
-
-Go to SQL Editor and run the SQL script from setup/supabase-setup.sql
-
-Note your Project URL and Anon Key
-
-Configure API Keys
-
-Edit js/utils-supabase.js:
-
-javascript
-const SUPABASE_URL = "https://your-project.supabase.co";
-const SUPABASE_ANON_KEY = "your-anon-key-here";
-Run the application
-
-Use VS Code Live Server extension
-
-Or any local server (XAMPP, WAMP, etc.)
-
-Open index.html in your browser
-
-📁 Project Structure
-text
-freshers2025/
-├── index.html              # Homepage
-├── junior.html            # Junior registration
-├── senior.html            # Senior registration
-├── payment.html           # Payment gateway
-├── success.html           # Success page
-├── dashboard.html         # Admin dashboard
-├── gate-scanner.html      # Entry scanner
-├── food-scanner.html      # Food scanner
+frontend/
+│
 ├── js/
-│   ├── utils-supabase.js  # Supabase API functions
-│   ├── qr.js              # QR code generation
-│   ├── form.js            # Form handling
-│   └── [other scripts]
-├── assets/                # Images, icons
-└── README.md              # This file
-🔧 Configuration
-Database Setup
-Run the SQL script in Supabase SQL Editor to create:
+│ ├── config.js # Supabase credentials (ignored by git)
+│ ├── config.example.js # Example config file
+│ ├── utils.js # Helper functions
+│ ├── utils-supabase.js # Supabase logic
+│ ├── form.js # Registration logic
+│ ├── qr.js # QR generation
+│ ├── dashboard.js # Admin dashboard logic
+│ ├── gate-scan.js # Gate QR scanner
+│ └── food-scan.js # Food QR scanner
+│
+├── index.html
+├── junior.html
+├── senior.html
+├── payment.html
+├── success.html
+├── dashboard.html
+├── gate-scanner.html
+└── food-scanner.html
 
-registrations table - Attendee information
 
-payment_transactions table - Payment records
+---
 
-admin_users table - Admin credentials
+## 🗄 Database Design
 
-dashboard_stats view - Analytics view
+### Tables Used
+- `registrations`
+- `payment_transactions`
 
-Admin Credentials
-Username: Santa
+### Key Fields
+- `reg_no` (unique)
+- `payment_status`
+- `entry_scanned`
+- `food_scanned`
+- `transaction_id`
 
-Password: santa@2414
+Row Level Security (RLS) is enabled to safely allow frontend access.
 
-CORS Configuration
-In Supabase Dashboard → Authentication → URL Configuration, add:
+---
 
-http://localhost:5500 (for development)
+## 🔐 Security Measures
 
-Your deployed frontend URL (for production)
+- Supabase Anon Key stored in `config.js`
+- `config.js` ignored using `.gitignore`
+- RLS enabled on all tables
+- No credentials pushed to GitHub
 
-📊 API Endpoints
-Registration
-POST /api/register - Create new registration
+---
 
-GET /api/getPass/{regNo} - Get registration details
+## ⚙️ Setup Instructions
 
-Payment
-POST /api/verifyPayment - Verify payment transaction
+### 1️⃣ Clone Repository
+```bash
+git clone <your-repo-url>
 
-Scanning
-POST /api/verifyEntry - Verify entry QR code
+2️⃣ Setup Supabase
 
-POST /api/verifyFood - Verify food QR code
+Create a new Supabase project
 
-Dashboard
-GET /api/stats - Get dashboard statistics
+Run the provided SQL file in Supabase SQL Editor
 
-POST /api/adminLogin - Admin authentication
+Enable Row Level Security (RLS)
 
-🎯 Usage Guide
-For Students
-Visit homepage and select registration type
+3️⃣ Configure Credentials
 
-Fill in details and submit
+Create frontend/js/config.js:
 
-For seniors: Complete payment process
+window.APP_CONFIG = {
+  SUPABASE_URL: "https://your-project.supabase.co",
+  SUPABASE_ANON_KEY: "your-anon-key"
+};
 
-Download/print QR ticket
+4️⃣ Run Project
 
-Present QR code at event entry
+Open index.html in browser
+OR
 
-For Event Organizers
-Use dashboard.html for admin login
+Deploy using Vercel / Netlify
 
-Monitor real-time statistics
+🌐 Deployment
 
-Use gate-scanner.html for entry management
+This project can be deployed on:
 
-Use food-scanner.html for food distribution
+Vercel
 
-For Developers
-javascript
-// Example API call
-const result = await window.freshersApp.apiPost({
-    action: 'register',
-    data: {
-        name: 'John Doe',
-        regNo: 'REG001',
-        branch: 'CSE',
-        section: 'A',
-        type: 'Junior',
-        food: 'Veg',
-        email: 'john@example.com'
-    }
-});
-🚀 Deployment
-Frontend Deployment (Netlify)
-Push code to GitHub repository
+Netlify
 
-Connect Netlify to your repository
+GitHub Pages (static hosting)
 
-Configure build settings:
+🎓 Use Cases
 
-Build command: (leave empty for static site)
+College Freshers Party
 
-Publish directory: .
+Event entry management
 
-Add environment variables if needed
+Food coupon system
 
-Frontend Deployment (Vercel)
-bash
-npm install -g vercel
-vercel
-Supabase Configuration
-Enable Row Level Security
+QR-based attendance system
 
-Set up proper CORS policies
+📈 Future Improvements
 
-Monitor usage in Supabase dashboard
+Admin authentication
 
-🔒 Security Features
-Row Level Security - Data access control
+Automatic payment gateway integration
 
-Input Validation - Client-side validation
+Role-based access control
 
-QR Code Encryption - Secure ticket generation
+Analytics & charts
 
-Session Management - Admin session handling
+Backend API using Node.js or Java Spring Boot
 
-Rate Limiting - API request limiting
+👨‍💻 Developer
 
-📱 Browser Support
-Chrome 60+
+Santanu Barik
+BCA Student
+Aspiring Cloud & Full Stack Developer
 
-Firefox 55+
+⭐ Conclusion
 
-Safari 11+
+The Freshers QR System is a complete, real-world project demonstrating:
 
-Edge 79+
+Frontend + Database integration
 
-Opera 47+
+QR-based verification
 
-🐛 Troubleshooting
-Common Issues
-CORS Errors
+Secure cloud backend usage
 
-Check Supabase CORS configuration
+This project is suitable for:
 
-Verify correct API URL and key
+College submission
 
-Clear browser cache
+Internship portfolio
 
-Database Connection
-
-Verify Supabase project is active
-
-Check internet connection
-
-Confirm tables exist
-
-QR Scanner Issues
-
-Allow camera permissions
-
-Use HTTPS in production
-
-Test in different browsers
-
-Payment Verification
-
-Check transaction ID format
-
-Verify payment status in database
-
-Ensure registration exists
-
-Debug Mode
-Enable console logging in utils-supabase.js:
-
-javascript
-console.log('API Call:', data);
-📈 Performance
-Load Time: < 3 seconds
-
-API Response: < 500ms
-
-Database Queries: Optimized with indexes
-
-Assets: Minified and compressed
-
-🤝 Contributing
-Fork the repository
-
-Create feature branch (git checkout -b feature/AmazingFeature)
-
-Commit changes (git commit -m 'Add AmazingFeature')
-
-Push to branch (git push origin feature/AmazingFeature)
-
-Open Pull Request
-
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-🙏 Acknowledgments
-Supabase for amazing backend service
-
-Chart.js for data visualization
-
-QRCode.js for QR generation
-
-All contributors and testers
-
-📞 Support
-Documentation: Project Wiki
-
-Issues: GitHub Issues
-
-Email: support@example.com
-
-🚧 Roadmap
-Mobile app development
-
-SMS notifications
-
-Photo booth integration
-
-Live streaming features
-
-Multi-event management
-
-Advanced analytics
-
-Bulk registration import
-
-Certificate generation
-
+Hackathons and demos

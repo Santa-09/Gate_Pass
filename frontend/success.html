@@ -290,7 +290,12 @@
     </div>
   </div>
 
+  <script src="js/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script src="js/utils.js"></script>
+  <script src="js/utils-supabase.js"></script>
+  <script src="js/form.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const params = new URLSearchParams(window.location.search);
@@ -303,11 +308,7 @@
       }
 
       try {
-        // Show loading state
-        document.getElementById('ticket-name').textContent = 'Loading...';
-        document.getElementById('ticket-regno').textContent = 'Loading...';
-
-        const res = await apiGet({ action: 'getPass', regNo });
+        const res = await window.freshersApp.getRegistration(regNo);
 
         if (res.status !== 'ok' || !res.data) {
           alert('Registration not found. Please try registering again.');
@@ -320,7 +321,7 @@
         // Fill details dynamically
         document.getElementById('ticket-name').textContent = d.Name || 'N/A';
         document.getElementById('ticket-regno').textContent = d.RegNo || 'N/A';
-        document.getElementById('ticket-type').textContent = d.Type || (d.isJunior ? 'Junior' : 'Senior');
+        document.getElementById('ticket-type').textContent = d.Type || 'N/A';
         document.getElementById('ticket-branch').textContent = d.Branch || 'N/A';
         document.getElementById('ticket-section').textContent = d.Section || 'N/A';
         document.getElementById('ticket-food').textContent = d.Food || 'N/A';
@@ -340,8 +341,10 @@
     });
 
     function generateQRCode(d) {
-      const qrData = `APP:FRESHER2025|REG:${d.RegNo}|NAME:${d.Name}|TYPE:${d.Type || (d.isJunior ? 'Junior' : 'Senior')}|BRANCH:${d.Branch}|SECTION:${d.Section}|FOOD:${d.Food}`;
+      const qrData = `APP:FRESHER2025|REG:${d.RegNo}|NAME:${d.Name}|TYPE:${d.Type}|BRANCH:${d.Branch}|SECTION:${d.Section}|FOOD:${d.Food}`;
       const qrElement = document.getElementById('qrcode');
+      if (!qrElement) return;
+
       qrElement.innerHTML = "";
 
       // Create canvas for QR code

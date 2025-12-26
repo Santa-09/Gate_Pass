@@ -1,9 +1,12 @@
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('regForm');
-  form.addEventListener('submit', async (e)=>{
+
+  form.addEventListener('submit', async e => {
     e.preventDefault();
+
     const fd = new FormData(form);
-    const data = {
+
+    const res = await apiPost({
       action: 'register',
       data: {
         name: fd.get('name'),
@@ -14,18 +17,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         food: fd.get('food'),
         email: fd.get('email')
       }
-    };
-    try{
-      const res = await apiPost(data);
-      if(res.status === 'ok'){
-        // redirect to success page with regNo
-        location.href = 'success.html?regNo=' + encodeURIComponent(data.data.regNo);
-      } else {
-        showMsg(res.message || 'Registration failed', true);
-      }
-    } catch(err){
-      console.error(err);
-      showMsg('Network error. Check API_URL in js/utils.js', true);
+    });
+
+    if (res.status === 'ok') {
+      location.href = `success.html?regNo=${fd.get('regNo')}`;
+    } else {
+      showMsg(res.message, true);
     }
   });
 });

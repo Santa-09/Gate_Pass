@@ -362,8 +362,12 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script src="js/utils.js"></script>
   <script src="js/utils-supabase.js"></script>
+  <script src="js/form.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const loginBtn = document.getElementById('loginBtn');
@@ -371,6 +375,11 @@
 
       document.getElementById('password').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') login();
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        hideDashboard();
       });
 
       async function login() {
@@ -386,6 +395,21 @@
           errorMsg.style.display = 'block';
           setTimeout(() => errorMsg.style.display = 'none', 3000);
         }
+      }
+
+      function showDashboard() {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('navbar').style.display = 'flex';
+        document.getElementById('dashboard').style.display = 'block';
+        fetchDashboardData();
+      }
+
+      function hideDashboard() {
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('navbar').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
       }
 
       async function fetchDashboardData() {
@@ -408,10 +432,10 @@
             { icon: 'fa-user-graduate', title: 'Freshers', value: data.freshers || 0 },
             { icon: 'fa-user-friends', title: 'Seniors', value: data.seniors || 0 },
             { icon: 'fa-ticket-alt', title: 'Present Today', value: data.presentToday || 0 },
-            { icon: 'fa-credit-card', title: 'Paid Registrations', value: data.paid || 0 },
+            { icon: 'fa-credit-card', title: 'Paid', value: data.paid || 0 },
+            { icon: 'fa-clock', title: 'Pending', value: data.pending || 0 },
             { icon: 'fa-door-open', title: 'Entry Confirmed', value: data.entryConfirmed || 0 },
-            { icon: 'fa-utensils', title: 'Food Confirmed', value: data.foodConfirmed || 0 },
-            { icon: 'fa-leaf', title: 'Vegetarian', value: data.veg || 0 }
+            { icon: 'fa-utensils', title: 'Food Confirmed', value: data.foodConfirmed || 0 }
           ];
 
           statCards.forEach(stat => {
@@ -425,7 +449,83 @@
             statsContainer.appendChild(card);
           });
 
-          // Charts remain the same...
+          // Registration Trends Chart
+          if (window.Chart) {
+            const regCtx = document.getElementById('registrationChart').getContext('2d');
+            if (window.registrationChart) {
+              window.registrationChart.destroy();
+            }
+            window.registrationChart = new Chart(regCtx, {
+              type: 'line',
+              data: {
+                labels: data.trend.labels || [],
+                datasets: [
+                  {
+                    label: 'Freshers',
+                    data: data.trend.freshers || [],
+                    borderColor: '#8a2be2',
+                    backgroundColor: 'rgba(138,43,226,0.1)',
+                    tension: 0.3,
+                    fill: true
+                  },
+                  {
+                    label: 'Seniors',
+                    data: data.trend.seniors || [],
+                    borderColor: '#00b4d8',
+                    backgroundColor: 'rgba(0,180,216,0.1)',
+                    tension: 0.3,
+                    fill: true
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                    labels: { color: '#f8f9fa' }
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: '#f8f9fa' }
+                  },
+                  x: {
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: '#f8f9fa' }
+                  }
+                }
+              }
+            });
+
+            // Food Preference Chart
+            const foodCtx = document.getElementById('foodChart').getContext('2d');
+            if (window.foodChart) {
+              window.foodChart.destroy();
+            }
+            window.foodChart = new Chart(foodCtx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Vegetarian', 'Non-Vegetarian'],
+                datasets: [{
+                  data: [data.veg || 0, data.nonVeg || 0],
+                  backgroundColor: ['#8a2be2', '#00b4d8'],
+                  borderWidth: 0
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                    labels: { color: '#f8f9fa', font: { size: 14 } }
+                  }
+                }
+              }
+            });
+          }
         } catch (err) {
           console.error('Failed to fetch dashboard data', err);
         }

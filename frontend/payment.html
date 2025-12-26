@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,7 +105,8 @@
             border-radius: 6px;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover,
+        .nav-link.active {
             color: var(--primary);
             background: rgba(138, 43, 226, 0.1);
         }
@@ -577,19 +579,39 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.1); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 204, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.1);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 204, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 204, 0, 0);
+            }
         }
 
         /* Responsive Design */
@@ -598,31 +620,31 @@
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .nav-menu {
                 gap: 15px;
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            
+
             .nav-link {
                 font-size: 0.9rem;
                 padding: 6px 10px;
             }
-            
+
             .payment-header h1 {
                 font-size: 2rem;
             }
-            
+
             .payment-content {
                 flex-direction: column;
             }
-            
+
             .qr-placeholder {
                 width: 200px;
                 height: 200px;
             }
-            
+
             .info-grid {
                 grid-template-columns: 1fr;
             }
@@ -671,22 +693,22 @@
                 <!-- Order Summary -->
                 <div class="order-summary">
                     <h2><i class="fas fa-receipt"></i> Order Summary</h2>
-                    
+
                     <div class="summary-item">
                         <span>Registration Fee</span>
                         <span>₹ 410.18</span>
                     </div>
-                    
+
                     <div class="summary-item">
                         <span>Tax (18%)</span>
                         <span>₹ 89.82</span>
                     </div>
-                    
+
                     <div class="summary-item">
                         <span>Processing Fee</span>
                         <span>₹ 00.00</span>
                     </div>
-                    
+
                     <div class="summary-item">
                         <span>Total Amount</span>
                         <span>₹ 500.00</span>
@@ -696,7 +718,7 @@
                 <!-- QR Code Section -->
                 <div class="qr-section">
                     <h2><i class="fas fa-qrcode"></i> QR Payment</h2>
-                    
+
                     <div class="qr-container">
                         <div class="qr-placeholder" id="qrcode">
                             <div class="loading" style="text-align: center; padding: 20px;">
@@ -706,7 +728,7 @@
                         </div>
                         <p>Scan this QR code with any UPI app to pay</p>
                     </div>
-                    
+
                     <div class="payment-options">
                         <div class="payment-option">
                             <i class="fab fa-google-pay"></i>
@@ -721,9 +743,9 @@
                             <span>Paytm</span>
                         </div>
                     </div>
-                    
+
                     <div class="upi-redirect">or</div>
-                    
+
                     <button class="upi-button" id="upiDirectButton">
                         <i class="fas fa-external-link-alt"></i> Pay via UPI Apps
                     </button>
@@ -732,7 +754,7 @@
                 <!-- Transaction Verification -->
                 <div class="transaction-section">
                     <h2><i class="fas fa-check-circle"></i> Verify Payment</h2>
-                    
+
                     <div class="transaction-form">
                         <div class="form-group">
                             <label for="transaction-id">Transaction ID</label>
@@ -740,11 +762,11 @@
                                 placeholder="Enter your payment transaction ID" required>
                             <span class="help-text">You'll find this in your payment receipt or bank statement</span>
                         </div>
-                        
+
                         <button type="button" class="verify-button" id="verify-btn">
                             <i class="fas fa-check-circle"></i> Verify Payment
                         </button>
-                        
+
                         <div class="status-message success-message" id="success-message">
                             <i class="fas fa-check-circle"></i>
                             <div>
@@ -752,7 +774,7 @@
                                 <p>Your registration is now complete. Redirecting to ticket...</p>
                             </div>
                         </div>
-                        
+
                         <div class="status-message error-message" id="error-message">
                             <i class="fas fa-exclamation-circle"></i>
                             <div>
@@ -769,53 +791,24 @@
 
             <div class="payment-notice">
                 <i class="fas fa-info-circle"></i>
-                <p>Your registration will be confirmed only after payment verification. For immediate assistance, please contact our support team.</p>
+                <p>Your registration will be confirmed only after payment verification. For immediate assistance, please
+                    contact our support team.</p>
             </div>
         </div>
     </div>
 
+    <script src="js/config.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/utils-supabase.js"></script>
+    <script src="js/form.js"></script>
+
     <script>
-        // API URL from utils.js
-        const API_URL = "https://script.google.com/macros/s/AKfycbwUkGdpmhNW12XszW67Ab6kYAFVamsmd4ApDDuDDw9WbZ2cB7018t2aNsB_2Qm8eefAmg/exec";
-
-        // Helper functions
-        function showMsg(message, isError = false) {
-            const msgEl = document.getElementById('msg');
-            if (msgEl) {
-                msgEl.textContent = message;
-                msgEl.style.color = isError ? '#ff6b6b' : '#06d6a0';
-                msgEl.style.background = isError ? 'rgba(255, 107, 107, 0.1)' : 'rgba(6, 214, 160, 0.1)';
-                msgEl.style.borderLeft = isError ? '4px solid #ff6b6b' : '4px solid #06d6a0';
-                msgEl.style.display = 'block';
-                setTimeout(() => {
-                    msgEl.textContent = '';
-                    msgEl.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        async function apiGet(params) {
-            const url = new URL(API_URL);
-            Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
-            const res = await fetch(url);
-            return await res.json();
-        }
-
-        async function apiPost(data) {
-            const res = await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: { "Content-Type": "application/json" }
-            });
-            return await res.json();
-        }
-
-        // Generate UPI QR Code and load user data
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             // Get registration number from URL
             const urlParams = new URLSearchParams(window.location.search);
             const regNo = urlParams.get('regNo');
-            
+
             if (!regNo) {
                 showMsg('No registration data found. Please complete your registration first.', true);
                 setTimeout(() => {
@@ -826,24 +819,24 @@
 
             try {
                 // Load user registration data
-                const userData = await apiGet({ action: 'getPass', regNo: regNo });
-                
+                const userData = await window.freshersApp.getRegistration(regNo);
+
                 if (userData.status === 'ok' && userData.data) {
                     // Display user information
                     displayUserInfo(userData.data);
-                    
+
                     // Check if already paid
-                    if (userData.data.Status === 'Approved') {
+                    if (userData.data.payment_status === 'Paid') {
                         showMsg('Payment already verified! Redirecting to ticket...', false);
                         setTimeout(() => {
                             window.location.href = `success.html?regNo=${regNo}`;
                         }, 2000);
                         return;
                     }
-                    
+
                     // Generate QR code
                     await generateQRCode(regNo, userData.data);
-                    
+
                 } else {
                     showMsg('Failed to load registration data. Please try again.', true);
                 }
@@ -852,31 +845,12 @@
                 showMsg('Error loading registration data. Please refresh the page.', true);
             }
 
-            // Setup UPI direct payment button
-            document.getElementById('upiDirectButton').addEventListener('click', function() {
-                const upiId = "9692699132@fam";
-                const payeeName = "Freshers_Party";
-                const amount = "500.00";
-                const currency = "INR";
-                const transactionNote = `Freshers2025-${regNo}`;
-                
-                const upiURL = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=${currency}&tn=${encodeURIComponent(transactionNote)}`;
-                
-                // Open UPI apps
-                window.location.href = upiURL;
-                
-                // Fallback for browsers that don't support UPI deep linking
-                setTimeout(() => {
-                    showMsg('If UPI app did not open, please use the QR code above.', false);
-                }, 1000);
-            });
-
             // Payment verification handler
-            document.getElementById('verify-btn').addEventListener('click', async function() {
+            document.getElementById('verify-btn').addEventListener('click', async function () {
                 const transactionId = document.getElementById('transaction-id').value.trim();
                 const successMessage = document.getElementById('success-message');
                 const errorMessage = document.getElementById('error-message');
-                
+
                 // Hide any previous messages
                 successMessage.style.display = 'none';
                 errorMessage.style.display = 'none';
@@ -898,50 +872,34 @@
 
                 try {
                     // Call the payment verification API
-                    const verificationResult = await apiPost({
-                        action: "verifyPayment",
-                        transactionId: transactionId,
-                        regNo: regNo
-                    });
-                    
+                    const verificationResult = await window.freshersApp.verifyPayment(transactionId, regNo);
+
                     if (verificationResult.status === "ok") {
                         // Success case
                         showMsg('Payment verified successfully! Generating your ticket...', false);
-                        
+
                         // Update button
                         button.innerHTML = '<i class="fas fa-check-circle"></i> Verified!';
                         button.style.background = 'linear-gradient(45deg, var(--success), #06c68a)';
                         button.disabled = true;
-                        
+
                         // Show success message
                         successMessage.style.display = 'flex';
-                        
-                        // Generate QR code after successful payment
-                        setTimeout(async () => {
-                            try {
-                                const qrResult = await apiGet({ action: 'generateQR', regNo: regNo });
-                                if (qrResult.status === 'ok') {
-                                    console.log('QR generated successfully:', qrResult.QRURL);
-                                }
-                            } catch (qrError) {
-                                console.error('QR generation error:', qrError);
-                            }
-                        }, 1000);
-                        
+
                         // Countdown to redirect
                         let secondsRemaining = 3;
                         successMessage.querySelector('p').innerHTML = `
-                            <strong>Payment Verified!</strong><br>
-                            Redirecting to your ticket in ${secondsRemaining} seconds...
-                        `;
-                        
+                        <strong>Payment Verified!</strong><br>
+                        Redirecting to your ticket in ${secondsRemaining} seconds...
+                    `;
+
                         const countdown = setInterval(() => {
                             secondsRemaining--;
                             successMessage.querySelector('p').innerHTML = `
-                                <strong>Payment Verified!</strong><br>
-                                Redirecting to your ticket in ${secondsRemaining} seconds...
-                            `;
-                            
+                            <strong>Payment Verified!</strong><br>
+                            Redirecting to your ticket in ${secondsRemaining} seconds...
+                        `;
+
                             if (secondsRemaining <= 0) {
                                 clearInterval(countdown);
                                 window.location.href = `success.html?regNo=${regNo}&transactionId=${transactionId}`;
@@ -966,13 +924,14 @@
                 button.disabled = false;
                 button.style.background = 'linear-gradient(45deg, var(--primary), var(--secondary))';
             }
-        });
 
-        function displayUserInfo(userData) {
-            const userInfoEl = document.getElementById('userInfo');
-            const userDetailsEl = document.getElementById('userDetails');
-            
-            userDetailsEl.innerHTML = `
+            function displayUserInfo(userData) {
+                const userInfoEl = document.getElementById('userInfo');
+                const userDetailsEl = document.getElementById('userDetails');
+
+                if (!userInfoEl || !userDetailsEl) return;
+
+                userDetailsEl.innerHTML = `
                 <div class="info-item">
                     <span class="info-label">Name:</span>
                     <span class="info-value">${userData.Name || 'N/A'}</span>
@@ -999,67 +958,88 @@
                 </div>
                 <div class="info-item">
                     <span class="info-label">Status:</span>
-                    <span class="info-value" style="color: ${userData.Status === 'Approved' ? 'var(--success)' : 'var(--warning)'}">
-                        ${userData.Status || 'Pending Payment'}
+                    <span class="info-value" style="color: ${userData.payment_status === 'Paid' ? 'var(--success)' : 'var(--warning)'}">
+                        ${userData.payment_status === 'Paid' ? 'Paid' : 'Pending Payment'}
                     </span>
                 </div>
             `;
-            
-            userInfoEl.style.display = 'block';
-        }
 
-        async function generateQRCode(regNo, userData) {
-            const qrElement = document.getElementById('qrcode');
-            
-            try {
-                // UPI Payment Details
-                const upiId = "9692699132@fam";
-                const payeeName = "Freshers_Party";
-                const amount = "500.00";
-                const currency = "INR";
-                const transactionNote = `Freshers2025-${regNo}`;
-                
-                // Generate UPI payment URL
-                const upiURL = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=${currency}&tn=${encodeURIComponent(transactionNote)}`;
-                
-                // Clear loading message
-                qrElement.innerHTML = '';
-                const canvas = document.createElement('canvas');
-                
-                QRCode.toCanvas(canvas, upiURL, {
-                    width: 220,
-                    margin: 1,
-                    color: {
-                        dark: '#000000',
-                        light: '#ffffff'
-                    }
-                }, function(error) {
-                    if (error) {
-                        console.error('QR Code Error:', error);
-                        qrElement.innerHTML = `
-                            <div style="text-align: center; color: var(--accent);">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
-                                <p>Error generating QR code</p>
-                                <button onclick="location.reload()" class="upi-button" style="margin-top: 10px;">
-                                    <i class="fas fa-redo"></i> Retry
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        qrElement.appendChild(canvas);
-                    }
-                });
-                
-            } catch (error) {
-                console.error('QR generation error:', error);
-                qrElement.innerHTML = `
-                    <div style="text-align: center; color: var(--accent);">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
-                        <p>Failed to generate QR code</p>
-                    </div>
-                `;
+                userInfoEl.style.display = 'block';
             }
-        }
+
+            async function generateQRCode(regNo, userData) {
+                const qrElement = document.getElementById('qrcode');
+
+                try {
+                    // UPI Payment Details
+                    const upiId = "9692699132@fam";
+                    const payeeName = "Freshers_Party";
+                    const amount = "500.00";
+                    const currency = "INR";
+                    const transactionNote = `Freshers2025-${regNo}`;
+
+                    // Generate UPI payment URL
+                    const upiURL = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=${currency}&tn=${encodeURIComponent(transactionNote)}`;
+
+                    // Clear loading message
+                    if (qrElement) {
+                        qrElement.innerHTML = '';
+                        const canvas = document.createElement('canvas');
+
+                        QRCode.toCanvas(canvas, upiURL, {
+                            width: 220,
+                            margin: 1,
+                            color: {
+                                dark: '#000000',
+                                light: '#ffffff'
+                            }
+                        }, function (error) {
+                            if (error) {
+                                console.error('QR Code Error:', error);
+                                qrElement.innerHTML = `
+                                <div style="text-align: center; color: var(--accent);">
+                                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+                                    <p>Error generating QR code</p>
+                                    <button onclick="location.reload()" class="upi-button" style="margin-top: 10px;">
+                                        <i class="fas fa-redo"></i> Retry
+                                    </button>
+                                </div>
+                            `;
+                            } else {
+                                qrElement.appendChild(canvas);
+                            }
+                        });
+                    }
+
+                } catch (error) {
+                    console.error('QR generation error:', error);
+                    if (qrElement) {
+                        qrElement.innerHTML = `
+                        <div style="text-align: center; color: var(--accent);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+                            <p>Failed to generate QR code</p>
+                        </div>
+                    `;
+                    }
+                }
+            }
+
+            function showMsg(message, isError = false) {
+                const msgEl = document.getElementById('msg');
+                if (msgEl) {
+                    msgEl.textContent = message;
+                    msgEl.style.color = isError ? '#ff6b6b' : '#06d6a0';
+                    msgEl.style.background = isError ? 'rgba(255, 107, 107, 0.1)' : 'rgba(6, 214, 160, 0.1)';
+                    msgEl.style.borderLeft = isError ? '4px solid #ff6b6b' : '4px solid #06d6a0';
+                    msgEl.style.display = 'block';
+                    setTimeout(() => {
+                        msgEl.textContent = '';
+                        msgEl.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        });
     </script>
 </body>
+
 </html>

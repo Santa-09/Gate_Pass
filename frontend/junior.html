@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -267,6 +268,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -277,6 +279,7 @@
                 transform: translateY(30px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -288,6 +291,7 @@
                 transform: scale(1);
                 box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
             }
+
             100% {
                 transform: scale(1.05);
                 box-shadow: 0 0 50px rgba(255, 107, 107, 0.8);
@@ -359,7 +363,8 @@
 
                     <div class="form-group">
                         <label for="regNo">Registration Number *</label>
-                        <input type="text" id="regNo" name="regNo" required placeholder="Enter your registration number">
+                        <input type="text" id="regNo" name="regNo" required
+                            placeholder="Enter your registration number">
                     </div>
 
                     <div class="form-group">
@@ -409,37 +414,27 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/utils-supabase.js"></script>
+    <script src="js/form.js"></script>
+
     <script>
-        // API URL - REPLACE WITH YOUR DEPLOYED WEB APP URL
-        const API_URL = "https://script.google.com/macros/s/AKfycbwUkGdpmhNW12XszW67Ab6kYAFVamsmd4ApDDuDDw9WbZ2cB7018t2aNsB_2Qm8eefAmg/exec";
-
-        function showMsg(message, isError = false) {
-            const msgEl = document.getElementById('msg');
-            msgEl.textContent = message;
-            msgEl.className = isError ? 'error' : 'success';
-            msgEl.style.display = 'block';
-            
-            setTimeout(() => {
-                msgEl.style.display = 'none';
-            }, 5000);
-        }
-
-        async function apiPost(data) {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                mode: "cors",
-                cache: "no-cache",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data)
-            });
-            return await response.json();
-        }
-
         document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById("regForm");
             const submitBtn = document.getElementById("submitBtn");
+            const msgEl = document.getElementById("msg");
+
+            function showMsg(message, isError = false) {
+                msgEl.textContent = message;
+                msgEl.className = isError ? 'error' : 'success';
+                msgEl.style.display = 'block';
+
+                setTimeout(() => {
+                    msgEl.style.display = 'none';
+                }, 5000);
+            }
 
             form.addEventListener("submit", async (e) => {
                 e.preventDefault();
@@ -462,7 +457,7 @@
                 };
 
                 // Validation
-                if (!formData.data.name || !formData.data.regNo || !formData.data.branch || 
+                if (!formData.data.name || !formData.data.regNo || !formData.data.branch ||
                     !formData.data.section || !formData.data.food || !formData.data.email) {
                     showMsg("Please fill all required fields", true);
                     submitBtn.disabled = false;
@@ -470,12 +465,22 @@
                     return;
                 }
 
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.data.email)) {
+                    showMsg("Please enter a valid email address", true);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register as Junior';
+                    return;
+                }
+
                 try {
-                    const res = await apiPost(formData);
+                    // Use the new Supabase API
+                    const res = await window.freshersApp.apiPost(formData);
 
                     if (res.status === "ok") {
-                        showMsg("Registration successful! Redirecting...", false);
-                        
+                        showMsg("Registration successful! Generating your ticket...", false);
+
                         // Redirect to success page after 1 second
                         setTimeout(() => {
                             window.location.href = `success.html?regNo=${formData.data.regNo}`;
@@ -495,4 +500,5 @@
         });
     </script>
 </body>
+
 </html>
