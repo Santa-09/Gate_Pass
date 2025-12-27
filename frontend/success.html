@@ -9,83 +9,307 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0a0a0a, #121212);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
       color: #fff;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 6s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .particle:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s; }
+    .particle:nth-child(2) { width: 60px; height: 60px; top: 70%; left: 80%; animation-delay: 2s; }
+    .particle:nth-child(3) { width: 40px; height: 40px; top: 40%; left: 70%; animation-delay: 4s; }
+    .particle:nth-child(4) { width: 50px; height: 50px; top: 80%; left: 20%; animation-delay: 1s; }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 600px;
     }
 
     .card {
-      background: rgba(25, 25, 35, 0.9);
-      padding: 30px;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 520px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      padding: 40px 30px;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Decorative corner elements */
+    .corner-decoration {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #ffd166, #06d6a0);
+      opacity: 0.2;
+      border-radius: 50%;
+    }
+
+    .corner-decoration.top-left {
+      top: -50px;
+      left: -50px;
+    }
+
+    .corner-decoration.bottom-right {
+      bottom: -50px;
+      right: -50px;
+    }
+
+    .header {
+      margin-bottom: 25px;
     }
 
     h1 {
-      color: #06d6a0;
-      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 10px 0;
+      font-size: 2rem;
+      font-weight: 700;
+      animation: bounceIn 0.8s ease-out;
     }
 
-    .info {
-      margin: 12px 0;
-      font-size: 1.05rem;
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    .info span {
+    .emoji {
+      font-size: 2.5rem;
+      display: inline-block;
+      animation: rotate 2s infinite ease-in-out;
+    }
+
+    @keyframes rotate {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-10deg); }
+      75% { transform: rotate(10deg); }
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .info-item {
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      padding: 15px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+      text-align: left;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: #666;
       font-weight: 600;
-      color: #ffd166;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      font-size: 1.1rem;
+      color: #333;
+      font-weight: 600;
     }
 
     #qrBox {
-      margin: 25px auto;
-      width: 200px;
-      height: 200px;
+      margin: 30px auto;
+      width: 220px;
+      height: 220px;
       background: #fff;
-      padding: 10px;
-      border-radius: 12px;
+      padding: 15px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .note {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      opacity: 0.8;
+      margin: 20px 0;
+      font-size: 0.95rem;
+      color: #555;
+      font-weight: 500;
+      padding: 15px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 12px;
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      margin-top: 10px;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Responsive design */
+    @media (max-width: 640px) {
+      .card {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      #qrBox {
+        width: 180px;
+        height: 180px;
+      }
+
+      .download-btn {
+        width: 100%;
+        padding: 15px 20px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      .emoji {
+        font-size: 2rem;
+      }
+
+      #qrBox {
+        width: 160px;
+        height: 160px;
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- Background particles -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
 
-  <div class="card">
-    <h1>Registration Successful 🎉</h1>
+  <div class="container">
+    <div class="card" id="passCard">
+      <div class="corner-decoration top-left"></div>
+      <div class="corner-decoration bottom-right"></div>
 
-    <div class="info">Name: <span id="name"></span></div>
-    <div class="info">Registration No: <span id="regNo"></span></div>
-    <div class="info">Branch: <span id="branch"></span></div>
-    <div class="info">Section: <span id="section"></span></div>
-    <div class="info">Type: <span id="type"></span></div>
-    <div class="info">Food: <span id="food"></span></div>
+      <div class="header">
+        <h1>Registration Successful</h1>
+        <span class="emoji">🎉</span>
+      </div>
 
-    <div id="qrBox"></div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Name</div>
+          <div class="info-value" id="name">Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Registration No</div>
+          <div class="info-value" id="regNo">Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Branch</div>
+          <div class="info-value" id="branch">Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Section</div>
+          <div class="info-value" id="section">Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Type</div>
+          <div class="info-value" id="type">Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Food Preference</div>
+          <div class="info-value" id="food">Loading...</div>
+        </div>
+      </div>
 
-    <div class="note">
-      Please show this QR code at the entry gate.
+      <div id="qrBox"></div>
+
+      <div class="note">
+        📱 Please show this QR code at the entry gate
+      </div>
+
+      <button class="download-btn" onclick="downloadPass()">
+        📥 Download Pass
+      </button>
     </div>
   </div>
 
-  <!-- ✅ SCRIPT ORDER -->
+  <!-- Scripts -->
   <script src="js/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="js/utils.js"></script>
   <script src="js/utils-supabase.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -110,7 +334,6 @@
 
         const d = res.data;
 
-        // ✅ IDs MATCH HTML
         document.getElementById("name").innerText = d.name;
         document.getElementById("regNo").innerText = d.reg_no;
         document.getElementById("branch").innerText = d.branch;
@@ -118,7 +341,7 @@
         document.getElementById("type").innerText = d.type;
         document.getElementById("food").innerText = d.food;
 
-        // QR CODE
+        // Generate QR Code
         new QRCode(document.getElementById("qrBox"), {
           text: d.reg_no,
           width: 180,
@@ -130,6 +353,40 @@
         alert("Failed to load registration details");
       }
     });
+
+    async function downloadPass() {
+      const card = document.getElementById("passCard");
+      const btn = document.querySelector(".download-btn");
+      
+      btn.innerText = "Generating...";
+      btn.disabled = true;
+
+      try {
+        const canvas = await html2canvas(card, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+          logging: false
+        });
+
+        const link = document.createElement('a');
+        const regNo = document.getElementById("regNo").innerText;
+        link.download = `pass_${regNo}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerText = "✓ Downloaded!";
+        setTimeout(() => {
+          btn.innerText = "📥 Download Pass";
+          btn.disabled = false;
+        }, 2000);
+
+      } catch (err) {
+        console.error("Download error:", err);
+        alert("Failed to download pass");
+        btn.innerText = "📥 Download Pass";
+        btn.disabled = false;
+      }
+    }
   </script>
 
 </body>
