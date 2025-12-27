@@ -876,7 +876,11 @@
 
                 try {
                     // Call the payment verification API
-                    const verificationResult = await window.freshersApp.verifyPayment(transactionId, regNo);
+                    const verificationResult = await window.apiPost({
+                        action: "verifyPayment",
+                        transactionId: transactionId,
+                        regNo: regNo
+                    });
 
                     if (verificationResult.status === "ok") {
                         // Success case
