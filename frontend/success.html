@@ -362,16 +362,25 @@
       btn.disabled = true;
 
       try {
+        // Hide the download button temporarily
+        btn.style.display = 'none';
+
         const canvas = await html2canvas(card, {
           backgroundColor: '#ffffff',
-          scale: 2,
-          logging: false
+          scale: 3,
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          removeContainer: true
         });
+
+        // Show the button again
+        btn.style.display = 'block';
 
         const link = document.createElement('a');
         const regNo = document.getElementById("regNo").innerText;
         link.download = `pass_${regNo}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
 
         btn.innerText = "✓ Downloaded!";
@@ -383,6 +392,7 @@
       } catch (err) {
         console.error("Download error:", err);
         alert("Failed to download pass");
+        btn.style.display = 'block';
         btn.innerText = "📥 Download Pass";
         btn.disabled = false;
       }
