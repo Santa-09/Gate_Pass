@@ -797,20 +797,11 @@
         </div>
     </div>
 
-    <!-- 1. CONFIG MUST COME FIRST -->
     <script src="js/config.js"></script>
-
-    <!-- 2. SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-    <!-- 3. COMMON UTILS -->
     <script src="js/utils.js"></script>
-
-    <!-- 4. SUPABASE LOGIC -->
     <script src="js/utils-supabase.js"></script>
 
-    <!-- 5. PAGE LOGIC -->
-    <script src="js/form.js"></script>
 
 
     <script>
@@ -829,7 +820,10 @@
 
             try {
                 // Load user registration data
-                const userData = await window.freshersApp.getRegistration(regNo);
+                const userData = await window.apiGet({
+                    action: "getPass",
+                    regNo: regNo
+                });
 
                 if (userData.status === 'ok' && userData.data) {
                     // Display user information
@@ -936,46 +930,40 @@
             }
 
             function displayUserInfo(userData) {
-                const userInfoEl = document.getElementById('userInfo');
-                const userDetailsEl = document.getElementById('userDetails');
+                document.getElementById("userDetails").innerHTML = `
+                        <div class="info-item">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">${userData.name}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-label">Registration No:</span>
+                        <span class="info-value">${userData.reg_no}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-label">Branch:</span>
+                        <span class="info-value">${userData.branch}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-label">Section:</span>
+                        <span class="info-value">${userData.section}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">${userData.type}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-label">Food:</span>
+                        <span class="info-value">${userData.food}</span>
+                        </div>
+                        <div class="info-item">
+                        <span class="info-label">Payment Status:</span>
+                        <span class="info-value">${userData.payment_status}</span>
+                        </div>
+                    `;
 
-                if (!userInfoEl || !userDetailsEl) return;
-
-                userDetailsEl.innerHTML = `
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value">${userData.Name || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Registration No:</span>
-                    <span class="info-value">${userData.RegNo || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Branch:</span>
-                    <span class="info-value">${userData.Branch || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Section:</span>
-                    <span class="info-value">${userData.Section || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Type:</span>
-                    <span class="info-value">${userData.Type || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Food Preference:</span>
-                    <span class="info-value">${userData.Food || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Status:</span>
-                    <span class="info-value" style="color: ${userData.payment_status === 'Paid' ? 'var(--success)' : 'var(--warning)'}">
-                        ${userData.payment_status === 'Paid' ? 'Paid' : 'Pending Payment'}
-                    </span>
-                </div>
-            `;
-
-                userInfoEl.style.display = 'block';
+                document.getElementById("userInfo").style.display = "block";
             }
+
 
             async function generateQRCode(regNo, userData) {
                 const qrElement = document.getElementById('qrcode');
