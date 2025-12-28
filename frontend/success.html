@@ -199,7 +199,7 @@
 
     .info-label {
       font-size: 0.85rem;
-      color: #666;
+      color: #555;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -208,7 +208,7 @@
 
     .info-value {
       font-size: 1.1rem;
-      color: #333;
+      color: #111;
       font-weight: 600;
     }
 
@@ -434,8 +434,12 @@
         new QRCode(document.getElementById("qrBox"), {
           text: d.reg_no,
           width: 180,
-          height: 180
+          height: 180,
+          colorDark: "#000000",   // 🔥 BLACK
+          colorLight: "#ffffff", // 🔥 WHITE
+          correctLevel: QRCode.CorrectLevel.H
         });
+
 
       } catch (err) {
         console.error("Error loading data:", err);
