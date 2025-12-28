@@ -323,44 +323,82 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- inline scanner script OR js/gate-scan.js -->
 
-
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const html5QrCode = new Html5Qrcode("reader");
 
+      const successBox = document.getElementById("successResult");
+      const errorBox = document.getElementById("errorResult");
+      const warningBox = document.getElementById("warningResult");
+
+      function resetUI() {
+        successBox.style.display = "none";
+        errorBox.style.display = "none";
+        warningBox.style.display = "none";
+      }
+
       html5QrCode.start(
-        { facingMode: "environment" }, // 🔥 FORCE BACK CAMERA
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 }
-        },
+        { facingMode: "environment" }, // 📸 back camera
+        { fps: 10, qrbox: 250 },
         async decodedText => {
           await html5QrCode.stop();
+          resetUI();
 
           const regNo = decodedText.trim();
 
-          const res = await window.apiPost({
-            action: "verifyEntry",
-            regNo: regNo
-          });
+          try {
+            const res = await window.apiPost({
+              action: "verifyEntry",
+              regNo
+            });
 
-          if (res.status === "ok") {
-            alert("✅ Entry verified");
-          } else {
-            alert(res.message || "❌ Entry denied");
+            // ✅ FIRST TIME → ALLOWED
+            if (res.status === "allowed") {
+              document.getElementById("scanName").innerText = res.data.name;
+              document.getElementById("scanRegNo").innerText = regNo;
+              document.getElementById("scanType").innerText = res.data.type;
+              document.getElementById("scanTime").innerText =
+                new Date().toLocaleTimeString();
+
+              successBox.style.display = "block";
+            }
+
+            // ⚠️ SECOND TIME → ALREADY USED
+            else if (res.status === "used") {
+              document.getElementById("previousTime").innerText =
+                new Date(res.data.time).toLocaleTimeString();
+
+              warningBox.style.display = "block";
+            }
+
+            // ❌ INVALID QR
+            else {
+              errorBox.style.display = "block";
+            }
+
+          } catch (err) {
+            console.error(err);
+            errorBox.style.display = "block";
           }
+
+          // 🔄 restart scanner after 3 sec
+          setTimeout(() => {
+            resetUI();
+            html5QrCode.start(
+              { facingMode: "environment" },
+              { fps: 10, qrbox: 250 },
+              arguments.callee,
+              () => { }
+            );
+          }, 3000);
         },
-        err => {
-          // ignore scan errors
-        }
+        () => { }
       ).catch(err => {
         console.error(err);
         alert("Camera access failed");
       });
     });
   </script>
-
 
 </body>
 

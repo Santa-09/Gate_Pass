@@ -108,49 +108,87 @@ async function verifyPayment(txId, regNo) {
 }
 
 async function verifyEntry(regNo) {
+  // 1. Fetch user
   const { data, error } = await supabaseClient
     .from("registrations")
-    .select("entry_scanned")
+    .select("*")
     .eq("reg_no", regNo)
     .single();
 
-  if (error) return { status: "error", message: "Invalid QR" };
-  if (data.entry_scanned) {
-    return { status: "error", message: "Entry already scanned" };
+  if (error || !data) {
+    return { status: "error", message: "Invalid QR Code" };
   }
 
+  // 2. Already scanned
+  if (data.entry_scanned) {
+    return {
+      status: "used",
+      message: "Entry already used",
+      data: {
+        name: data.name,
+        type: data.type,
+        time: data.entry_time
+      }
+    };
+  }
+
+  // 3. First time scan → allow entry
   await supabaseClient
     .from("registrations")
-    .update({ entry_scanned: true })
+    .update({
+      entry_scanned: true,
+      entry_time: new Date()
+    })
     .eq("reg_no", regNo);
 
-  return { status: "ok" };
+  return {
+    status: "allowed",
+    message: "Entry Allowed",
+    data: {
+      name: data.name,
+      type: data.type
+    }
+  };
 }
+
 
 async function verifyFood(regNo) {
   const { data, error } = await supabaseClient
     .from("registrations")
-    .select("food_scanned")
+    .select("*")
     .eq("reg_no", regNo)
     .single();
 
-  if (error) return { status: "error", message: "Invalid QR" };
+  if (error || !data) {
+    return { status: "error", message: "Invalid QR Code" };
+  }
+
   if (data.food_scanned) {
-    return { status: "error", message: "Food already redeemed" };
+    return {
+      status: "used",
+      message: "Food already collected",
+      data: {
+        name: data.name,
+        food: data.food,
+        time: data.food_time
+      }
+    };
   }
 
   await supabaseClient
     .from("registrations")
-    .update({ food_scanned: true })
+    .update({
+      food_scanned: true,
+      food_time: new Date()
+    })
     .eq("reg_no", regNo);
 
-  return { status: "ok" };
-}
-
-async function getDashboardStats() {
-  const { count: total } = await supabaseClient
-    .from("registrations")
-    .select("*", { count: "exact", head: true });
-
-  return { status: "ok", data: { total } };
+  return {
+    status: "allowed",
+    message: "Food Collected",
+    data: {
+      name: data.name,
+      food: data.food
+    }
+  };
 }
