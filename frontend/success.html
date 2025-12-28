@@ -328,6 +328,11 @@
     .download-mode .particle {
       display: none !important;
     }
+
+    .download-mode #qrBox {
+      background: #ffffff !important;
+      border: 2px solid #f0f0f0 !important;
+    }
   </style>
 </head>
 
@@ -452,7 +457,7 @@
         btn.style.display = "none";
 
         // Small delay to apply styles
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 500));
 
         const canvas = await html2canvas(card, {
           scale: 4,                 // HIGH QUALITY
